@@ -16,7 +16,7 @@
             <header class="header-container">
                 <div class="header-top">
                     <span class="btn-open" id="js-btn-pause-timer">
-                        <i class="fa fa-times" aria-hidden="true"></i>
+                        <img src="images/icon-close.png" width="33" alt="" />
                     </span>
                 </div>
                 <div class="header-label bg-main text-white text-center">
@@ -194,8 +194,8 @@
                 次の問題に進みましょう！
             </div>
         </div>
-        <script type = "text/javascript" src="js/app-test.js"></script>
-        <!-- <script type="text/javascript">
+        <!-- <script type = "text/javascript" src="js/app-test.js"></script> -->
+        <script type="text/javascript">
                 var questionCount = document.getElementById("qs-count");
                 var timerEl = document.getElementById("timer");
                 var progressBar = document.querySelector('.progress-bar');
@@ -229,7 +229,7 @@
                     },
                 }
 
-                var TIME_LIMIT = 20;
+                var TIME_LIMIT = 60;
                 var timePassed = 0;
                 var timeLeft = TIME_LIMIT;
                 var timerInterval = null;
@@ -304,7 +304,7 @@
                     }
                     progressBar.children[0].classList.add('info')
                     progressBar.children[0].classList.remove('warning');
-                    for(let item = 0; item < quizLength; item++) {
+                    for(var item = 0; item < quizLength; item++) {
                         quizItem[item].classList.add("hide");
                     }
                     quizItem[index].classList.remove("hide");
@@ -314,7 +314,7 @@
 
                     choices = quizItem[index].querySelectorAll('input')
 
-                    for(let i = 0; i < choices.length; i++) {
+                    for(var i = 0; i < choices.length; i++) {
                         //if question has been answered already
                         if (storedAnswer) {
                             var id = storedAnswer.id;
@@ -345,6 +345,7 @@
                     countQuestion++
                     if (countQuestion == quizLength + 1) {
                         console.log("submit")
+                      
                         
                     } else {
                         index ++;
@@ -382,6 +383,6 @@
                     startQuiz()
                 }
                 inital()
-        </script> -->
+        </script>
     </body>
 </html>

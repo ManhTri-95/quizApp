@@ -1,88 +1,91 @@
-var items = document.querySelectorAll(".qs-item");
-var nextQuestionBtn = document.getElementById("js-btn-next-qs");
-
-function Quiz(items) {
-    this.questionIndex = 0;
-    this.items = items;
+function Quiz(questions) {
+    this.questions = questions;
+    this.currentQuestionIndex = 0;
 }
 
-Quiz.prototype.getQuestionIndex = function() {
-    return this.items[this.questionIndex];
-}
-
-Quiz.prototype.isEnded = function() {
-    return this.questionIndex === this.items.length;
+Quiz.prototype.getCurrentQuestion = function() {
+    return this.questions[this.currentQuestionIndex];
 }
 
 Quiz.prototype.nextQuestion = function() {
-    this.questionIndex++;
+    this.currentQuestionIndex++;
 }
 
+Quiz.prototype.hasEnded = function() {
+    if (this.currentQuestionIndex === this.questions.length)
+      return true;
+}
 
+var QuizUI = { 
+    displayNext : function(){ 
+        if (quiz.hasEnded()) {
 
-function quizDisplay() {
-    if(quiz.isEnded()) { 
-        console.log("submit")
-    } else {
-        //show question
-        for(var i = 0; i < items.length; i++) {
-            items[i].classList.add('hide')
+        } else {
+            this.displayQuestion();
+            quiz.this.nextQuestion();
         }
-        items[quiz.questionIndex].classList.remove("hide")
+    },
 
-        //show option
-        var choices = items[quiz.questionIndex].querySelectorAll('input')
-        for(var i = 0; i < choices.length; i++) { 
-            choices[i].setAttribute("checked", "checked");
+    displayQuestion: function(){ 
+        for(var item = 0; item < quiz.questions.length; item++) {
+            quiz.questions[item].classList.add("hide");
         }
-        choices[i].addEventListener("click", storeAnswer);
     }
 }
 
- 
-function storeAnswer(e) { 
-    var element = e.target;
-    var answer = {
-        id: element.id,
-        value: element.value || ""
-    }
-    // storeAnswer[index] = answer;
-    // console.log(storeAnswer[index])
-    // if ( storeAnswer[index] !== null) {
-    //     nextQuestionBtn.removeAttribute('disabled', '');
-    // }
-}
+var items = document.querySelectorAll('.qs-item');
+var quiz = new Quiz(items)
+console.log(quiz)
 
-
-function setText (id,text){ 
-    var element= document.getElementById(id);
-    // innerHTML is a property, not function
-	element.innerHTML = text;
-}
-
-function countQuestion () {
-    var questionNo = quiz.questionIndex;
-    this.setText("qs-count", (questionNo+1) + "/" + quiz.items.length + "問");
-}
+QuizUI.displayQuestion();
 
 
 
-function nextQuestionItem() {
-    if(quiz.isEnded()) {  
-        console.log("submit")
-    } else {
-        quizDisplay()
-        countQuestion()
-    }  
-}
+// var QuizController = (function () {
+   
+// })();
 
 
-nextQuestionBtn.addEventListener("click",  function() {
-    quiz.nextQuestion()
-    nextQuestionItem()
-})
+// var UIController = (function () {
+//     var DOMstrings = { 
+//         nextQuestionBtn: "#js-btn-next-qs",
+//         questionItems: '.qs-item'
+//     };
+
+//     return {
+//         displayQuestion: function() {
+//             var items = document.querySelectorAll(DOMstrings.questionItems);
+//             for(var i = 0; i < items.length; i++) {
+//                 items[i].classList.add("hide")
+//             }
+//         },
+
+//         getDOMstrings: function () {
+//             return DOMstrings;
+//         },
+
+//     }
+// })();
 
 
-var quiz = new Quiz(items);
 
-nextQuestionItem()
+
+// var initGlobal = (function (quizCtrl, UICtrl) { 
+//     var setupEventListeners = function() {
+//         var DOM = UICtrl.getDOMstrings();
+//         document.querySelector(DOM.nextQuestionBtn).addEventListener("click", nextQuestionItem)
+        
+//     };
+
+   
+//     return { 
+//         init: function () { 
+//             console.log("Application has started.");
+//             UICtrl.displayQuestion()
+//             setupEventListeners();
+//         }
+//     }
+// })(QuizController, UIController);
+
+
+// initGlobal.init();
