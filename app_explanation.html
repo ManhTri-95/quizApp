@@ -793,7 +793,7 @@
            for (var j = 0; j < item.length; j++) {
                 btnCollapse = item[j].querySelector(".btn-collapse");
                 btnCollapse.addEventListener("click", function() {
-                    if ( this.closest('.answer-item').classList.contains('expand')) {
+                    if ( this.parentElement.parentElement('.answer-item').classList.contains('expand')) {
                         this.closest('.answer-item').classList.remove("expand")
                     } else {
                         this.closest('.answer-item').classList.add("expand")

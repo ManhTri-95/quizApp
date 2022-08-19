@@ -50,7 +50,7 @@
 .qs-question { padding: 15px; border-bottom: 1px solid  #49A3E5; border-top: 1px solid  #49A3E5;}
 
 .question-text { margin-top: 10px;}
-.qs-answer {padding: 15px; max-height: calc(100vh - 225px); overflow-y: scroll;}
+.qs-answer {padding: 15px; max-height: calc(100vh - 225px); overflow-y: auto;}
 
 .qs-answer-item { position: relative; display: flex; padding: 10px 20px; border: 1px solid #49A3E5; background-color: #FAFAFA; margin-bottom: 5px; border-radius: 15px; }
 .qs-answer__option.disabled::after { content: "";position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; background-color: transparent;}
@@ -163,4 +163,4 @@
     }
 }
 
-.qs__body { max-height: calc(100vh - 225px);overflow-y: scroll; }
+.qs__body { max-height: calc(100vh - 225px);overflow-y: auto; }
