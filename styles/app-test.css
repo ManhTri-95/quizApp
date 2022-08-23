@@ -53,6 +53,7 @@
 .qs-answer {padding: 15px; max-height: calc(100vh - 225px); overflow-y: auto;}
 
 .qs-answer-item { position: relative; display: flex; padding: 10px 20px; border: 1px solid #49A3E5; background-color: #FAFAFA; margin-bottom: 5px; border-radius: 15px; }
+.qs-answer__option { position: relative;}
 .qs-answer__option.disabled::after { content: "";position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; background-color: transparent;}
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {

@@ -1,139 +1,282 @@
-var Quiz = function() {}
+(function (){
+	var Quiz = function() {}
+	Quiz.prototype.opts = {}
 
-Quiz.prototype.render = function() { 
-    var questions = document.querySelectorAll('.qs-item');
-    var nextQuestionBtn = document.getElementById("js-btn-next-qs");
-    var progressBar = document.querySelector('.progress-bar');
-    var pauseTimerBtn = document.getElementById("js-btn-pause-timer");
-    var modalPauseTimer = document.getElementById("modal-pause-timer");
-    var resumeTimerBtn = document.getElementById("js-btn-continue");
+	Quiz.prototype.data = {
+		currentQuestion: 0,
+		timeLimit: 0,
+		timePassed: 0,
+		timeLeft: 0,
+		timerInterval: null,
+		totalQuestion: 0,
+		storedAnswers: {
+			is_finished: false,
+			answer: null,
+			duration: 0
+		},
+	}
 
-    // GLOBAL VARIABLES
-    var currentQuestion = 0;
+	Quiz.prototype.elements = {}
 
-    var timeLimit = 60;
-    var timePassed = 0;
-    var timeLeft = timeLimit;
-    var timerInterval = null;
+	Quiz.prototype.init = function(opts){
+		this.elements = {
+			questions: document.querySelectorAll('.qs-item'),
+			progressBar: document.getElementById('js-progress-bar'),
+			btnNext: document.getElementById("js-btn-next-qs"),
+			btnPause: document.getElementById("js-btn-pause-timer"),
+			modalTimer: document.getElementById("modal-pause-timer"),
+			btnResume: document.getElementById("js-btn-continue"),
+			tooltips: document.getElementById("js-bubble"),
+			btnCloseTooltips: document.getElementById("js-bubble__close")
+		}
+		
+		this.data.totalQuestion = this.elements.questions.length;
+	   
+		this.opts = Object.assign(this.opts,opts);
+		// Check data
+		
+		this.displayQuestion();
+		
+		this.initEventDOM();
+	}
 
-    var storedAnswers = [];
+	Quiz.prototype.initEventDOM = function(){
+		
+		this.elements.btnNext.addEventListener('click', this.nextQuestion.bind(this));
 
-    function displayQuestion () {
-        nextQuestionBtn.setAttribute('disabled', '');
-        
-        for(var i = 0; i < questions.length; i++) {
-            questions[i].classList.add('hide')
-        }
-        questions[currentQuestion].classList.remove('hide');
+		this.elements.btnPause.addEventListener("click", this.evtClickPause.bind(this));
 
-        setText("qs-count", (currentQuestion + 1) + "/" + questions.length + "問")
+		this.elements.btnResume.addEventListener("click", this.evtClickResume.bind(this));
 
-        progressBar.children[0].classList.remove("warning");
-        progressBar.children[0].classList.add("info");
+		this.elements.btnCloseTooltips.addEventListener("click", this.evtClickCloseTooltips.bind(this));
+		
+		this.choicesAnswerEvt();
+	}
 
-        storedAnswer = storedAnswers[currentQuestion];
-        choices =  questions[currentQuestion].querySelectorAll('input');
-        for(var i = 0; i < choices.length; i++) { 
-            // if (storedAnswer) {
-            //     var id = storedAnswer.id; 
-            //     if (i == id) {  
-            //         console.log(choices[i].setAttribute("checked", "checked"));
-            //     }
-            // }
-            choices[i].addEventListener("click", storeAnswer);
-        }
+	Quiz.prototype.evtClickPause = function(){
+		this.elements.modalTimer.style.display = "block";
+		this.pauseTimer();
+	}
+	Quiz.prototype.evtClickResume = function(){
+		this.elements.modalTimer.style.display = "none";
+			this.resumeTimer();
+	}
 
-        startTimer();
-    }
+	Quiz.prototype.evtClickCloseTooltips = function() {
+		this.elements.tooltips.style.display = "none";
+		this.opts.is_first = false;
+	}
 
-    function storeAnswer(e) { 
-        var element = e.target;
-        var answer = {
-            id: element.id,
-            value: element.value || ""
-        }
-        storeAnswer[currentQuestion] = answer;
-        if ( storeAnswer[currentQuestion] !== null) {
-            nextQuestionBtn.removeAttribute('disabled', '');
-        }
-    }
+	Quiz.prototype.getQuestion = function(index){
+		return this.elements.questions[index] || null;
+	}
 
-    function setText(id,text) {
-        var element= document.getElementById(id);
-        element.innerText = text;
-    }
+	Quiz.prototype.activeQuestionByIndex = function(index){
+		if( index > 0 ){
+			this.elements.questions[index-1].classList.add('hide');
+		}
+		if( this.elements.questions[index] )
+			this.elements.questions[index].classList.remove('hide');
+	}
+	// Display question
+	Quiz.prototype.displayQuestion = function () {
+		
+	   //document.getElementById("js-btn-next-qs").setAttribute('disabled', '');
+		for(var i = 0; i < this.data.totalQuestion; i++) {
+			this.elements.questions[i].classList.add('hide')
+		}
+		
+		this.activeQuestionByIndex(this.data.currentQuestion);
 
-    // Start timer question
-    function startTimer() {  
-        if (timerInterval !== null) {
-            clearInterval(timerInterval);
-        }
-        timerInterval = setInterval(() => { 
-            timePassed = timePassed += 1;
-            timeLeft = timeLimit - timePassed;
-            progressBarWidth =  timeLeft * progressBar.offsetWidth / timeLimit;
-            progressBar.children[0].style.width = progressBarWidth + "px";
-            setText("timer", "残り" + timeLeft + "秒");
+		this.setText("qs-count", (this.data.currentQuestion + 1) + "/" + this.data.totalQuestion + "問");
 
-            //change color progressBar if timeLeft = 10
-            if (timeLeft < (timeLimit*20/100)) {
-                progressBar.children[0].classList.add("warning");
-                progressBar.children[0].classList.remove("info");
-            } 
-            if (timeLeft < 1) { 
-                if (storeAnswer[currentQuestion] == null) {
-                    nextQuestionBtn.removeAttribute('disabled', '');
-                }
-                disableListAnswer = questions[currentQuestion].querySelectorAll(".qs-answer__option");  
-                for(var i = 0; i < disableListAnswer.length; i++) {
-                    disableListAnswer[i].classList.add("disabled", "not-allow");
-                }
-                clearInterval(timerInterval);
-            }
-        }, 1000)
-    }
+		this.elements.progressBar.children[0].classList.remove("warning");
 
-    //pause timer question
-    function pauseTimer() {
-        clearInterval(timerInterval);
-    }
+		this.elements.progressBar.children[0].classList.add("info");
 
-    //reset timer question
-    function resetTimer() {
-        timeLimit = 60;
-        timePassed = 0;
-        timeLeft = timeLimit;
-    }
+		this.elements.btnNext.setAttribute("disabled", 'disabled');
 
-     //resume timer question
-    function resumeTimer() {
-        startTimer();
-    }
+		this.startTimer();
+		
+		this.setText("timer", "残り" +  this.opts.timer + "秒");
+		this.elements.progressBar.children[0].style.width = '100%';
+		
+		document.querySelector('.container')
+		.classList.remove('hide');
 
-    displayQuestion();
+		//delete window.startQuiz;
+	}
 
-    nextQuestionBtn.addEventListener("click", function() {
-        if(currentQuestion < questions.length - 1) {
-            currentQuestion++;
-            resetTimer();
-            displayQuestion();
-           
-        } else {
-            console.log('submit')
-        }
-    })
+	// event next question
+	Quiz.prototype.nextQuestion = function (e) {
+		e.target.setAttribute('disabled', 'disabled');
+		this.getAnswer();
+		if(this.data.currentQuestion < this.data.totalQuestion - 1) { 
+			
+			this.data.currentQuestion++;
 
-    pauseTimerBtn.addEventListener("click", function() {
-        modalPauseTimer.style.display = "block";
-        pauseTimer();
-    })
+			this.resetTimer();
 
-    resumeTimerBtn.addEventListener("click", function() {
-        modalPauseTimer.style.display = "none";
-        resumeTimer();
-    })
-}
+			this.displayQuestion();
 
+		} else {
+			// console.log('submit')
+		}
+	}
 
-var quiz = new Quiz();
-quiz.render()
+	// Disabled answer when timeout
+	Quiz.prototype.disabledQuestion = function () {
+		disableListAnswer =  this.elements.questions[this.data.currentQuestion].querySelectorAll(".qs-answer__option");  
+		for(var i = 0; i < disableListAnswer.length; i++) {
+			disableListAnswer[i].classList.add("disabled", "not-allow");
+		}
+	}
+
+	//render text
+	Quiz.prototype.setText = function(id,text) { 
+		return document.getElementById(id).innerText = text;
+	}
+
+	// Start timer question
+	Quiz.prototype.startTimer = function() {
+		this.clearInterval();
+		
+		this.data.timerInterval = setInterval((function(){
+			this.data.timePassed =  this.data.timePassed += 1;
+			this.data.timeLeft = this.opts.timer -  this.data.timePassed;
+			
+			this.changeProgress()
+			.needShowTooltipSuggestion();
+			
+			if ( this.data.timeLeft < 1) {
+				this.disabledQuestion();
+				this.elements.btnNext.removeAttribute("disabled");
+				clearInterval(this.data.timerInterval);
+			}
+		}).bind(this), 1000)
+	}
+
+	Quiz.prototype.changeProgress = function(){
+		var progressBarWidth =  this.data.timeLeft * this.elements.progressBar.offsetWidth / this.opts.timer;
+		this.elements.progressBar.children[0].style.width = progressBarWidth + "px";
+		
+		this.setText("timer", "残り" +  this.data.timeLeft + "秒");
+		
+		this.elements.progressBar.children[0].classList.remove("warning");
+		this.elements.progressBar.children[0].classList.add("info");
+
+		if (this.data.timeLeft < (this.opts.timer*20/100)) { 
+			this.elements.progressBar.children[0].classList.add("warning");
+			this.elements.progressBar.children[0].classList.remove("info");
+		}
+		
+		return this;
+	}
+
+	Quiz.prototype.needShowTooltipSuggestion = function(){
+		if (this.opts.is_first && (this.data.timeLeft <= this.opts.timer*50/100)) {
+			this.elements.tooltips.style.display = "block";
+		} else {
+			this.elements.tooltips.style.display = "none";
+		}
+		
+		return this;
+	}
+
+	//reset timer question
+	Quiz.prototype.resetTimer = function () { 
+		this.data.timeLimit = this.opts.timer;
+		this.data.timePassed = 0;
+		this.data.timeLeft = this.opts.timer;
+		this.clearInterval();
+	}
+
+	//resume timer question
+	Quiz.prototype.clearInterval = function () {
+		if( this.data.timerInterval !== null ){
+			clearInterval(this.data.timerInterval);
+			this.data.timerInterval = null;
+		}
+	}
+
+	//resume timer question
+	Quiz.prototype.resumeTimer = function () {
+		this.startTimer();
+	}
+
+	//pause timer
+	Quiz.prototype.pauseTimer = function () {
+		clearInterval(this.data.timerInterval);
+	}
+
+	Quiz.prototype.choicesAnswerEvt = function () {
+		var choices = document.querySelectorAll('input[type="radio"]');
+		for (var i = 0; i < choices.length; i++) {
+			choices[i].addEventListener("change", this.storeAnswer.bind(this)); 
+		}   
+	}
+
+	Quiz.prototype.storeAnswer = function(e) { 
+		
+		this.data.storedAnswers = {
+			is_finished: false,
+			answer: e.target.value || null,
+			duration: this.opts.timer - this.data.timeLeft,
+			id: this.getQuestion(this.data.currentQuestion).getAttribute('data-id') || ''
+		}
+		
+		this.elements.btnNext.removeAttribute('disabled');
+	}
+
+	Quiz.prototype.getAnswer = function () {
+		
+		this.data.storedAnswers.is_finished = (
+			this.data.currentQuestion >= this.data.totalQuestion - 1
+		); 
+		
+		if( this.data.storedAnswers.is_finished ) this.pauseTimer();
+
+		this.disabledQuestion();
+		console.log(this.data.storedAnswers)
+		this.postDataToApp();
+	}
+
+	Quiz.prototype.postDataToApp = function(){
+		this.postMessage('answerTest', this.data.storedAnswers);
+		
+		this.data.storedAnswers = {
+			is_finished: false,
+			answer: null,
+			duration: this.opts.timer
+		}
+	}
+
+	Quiz.prototype.postMessage = function(fncName, msg){
+		msg = JSON.stringify(msg);
+		
+		if( 'webkit' in window ){
+			window.webkit.messageHandlers[fncName].postMessage(msg);
+		}else if( 'Android' in window || 'android' in window ) {
+			(window.android || window.Android)[fncName](msg);
+		}
+	}
+
+	var quiz = new Quiz();
+
+	window.startQuiz = function(opts) {
+		var e = null, isSuccess = false;
+		try {
+			quiz.init(opts);
+			isSuccess = true;
+		} catch (error) {
+			e = error.message;
+		}
+		
+		quiz.postMessage('loadFinished', {error: e, "success": isSuccess});
+		
+		return isSuccess;
+	}
+
+	quiz.postMessage('javascriptLoaded', {"success": true});
+	startQuiz({"timer": 15, "is_first": true});
+})()
