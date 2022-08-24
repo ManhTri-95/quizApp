@@ -68,14 +68,16 @@ img {
 
 /* css button  */
 .btn { 
+    display: inline-block;
     width: 116px; 
     height: 32px; 
     border-radius: 5px;
     text-align: center;
-    line-height: 30px; 
+    line-height: 32px; 
     font-size: 14px; 
     border: none;
     box-shadow: 0 4px 6px rgb(0 0 0 / 35%);
+    padding: 0;
 }
 
 .btn--primary { 

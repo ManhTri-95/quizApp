@@ -5,7 +5,6 @@
         <meta http-equiv="encoding" content="utf-8">
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <meta name="viewport" content="height=device-height,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="styles/index.css">
         <link rel="stylesheet" href="styles/app-explanation.css">
         
@@ -13,7 +12,7 @@
     </head>
     <body>
         <div class="container">
-            <header class="header-container fixed">
+            <header class="header-container">
                 <div class="header-title text-main text-center">
                     Show the title of the quiz here
                 </div>
@@ -23,7 +22,7 @@
             </header>
             <div class="main-container">
                 <div class="answer">
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-1">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題1</span>
@@ -48,7 +47,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-2">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題2</span>
@@ -267,7 +266,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-3">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題3</span>
@@ -292,7 +291,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-4">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題4</span>
@@ -336,7 +335,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-5">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題5</span>
@@ -361,7 +360,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-6">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題6</span>
@@ -405,7 +404,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                   <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-7">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題7</span>
@@ -430,7 +429,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-8">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題8</span>
@@ -649,7 +648,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-9">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題9</span>
@@ -674,7 +673,7 @@
                             <button class="btn btn--info btn-collapse">もっと見る</button>
                         </div>
                     </div>
-                    <div class="answer-item expand">
+                    <div class="answer-item expand" id="answer-item-10">
                         <div class="answer-inner">
                             <div class="answer-top">
                                 <span class="label-default">問題10</span>
@@ -721,88 +720,14 @@
                 </div>
                 <div class="fixed-footer">
                     <div class="group-btn">
-                        <button class="btn btn-outline-warning" id="js-back-result-page">正解率へ戻る</button>
-                        <button class="btn btn-warning" id="js-back-test-page">問題一覧へ</button>
-                        <button class="btn btn-outline-warning" id="js-btn-back-answer">前のページへ</button>
-                        <button class="btn btn-warning" id="js-btn-next-answer">次のページへ</button>
+                        <button class="btn btn-outline-warning" id="js-btn-back-result-page">正解率へ戻る</button>
+                        <button class="btn btn-warning" id="js-btn-back-list-page">問題一覧へ</button>
+                        <a class="btn btn-outline-warning js-scroll" href="#answer-item-1" id="js-btn-back-answer">前のページへ</a>
+                        <a class="btn btn-warning js-scroll" href="#answer-item-6" id="js-btn-next-answer">次のページへ</a>
                     </div>
                 </div>
             </div>
         </div>
         <script type = "text/javascript" src="js/app-explanation.js"></script>
-        <!-- <script>
-           var item = document.querySelectorAll(".answer-item");
-           var itemContentText  = document.querySelectorAll(".answer-content");
-           var backFisrtAnswerBtn = document.getElementById("js-btn-back-answer");
-           var nextAnswerBtn = document.getElementById("js-btn-next-answer");
-           var backResultPage = document.getElementById("js-back-result-page")
-           var backTestListPage = document.getElementById("js-back-test-page")
-           var ellipsestext = "...";
-           var maxLength = 42;
-           
-            if(item.length <= 5) {
-                backFisrtAnswerBtn.classList.add("hide");
-                nextAnswerBtn.classList.add("hide")
-            } 
-            if (item.length > 5) {
-                var scrollElements = item[5];
-                window.addEventListener("scroll", () => {  
-                    var elementTop =  scrollElements.getBoundingClientRect().top;
-                    if (elementTop <= (window.innerHeight || document.documentElement.clientHeight)) {
-                    //if (elementTop >= 0 ) {
-                        nextAnswerBtn.classList.add("hide");
-                        backFisrtAnswerBtn.classList.remove("hide");
-                        backResultPage.classList.add("hide");
-                        backTestListPage.classList.remove("hide");
-                        document.querySelector(".group-btn").classList.add("reverse");
-                    } else {
-                        nextAnswerBtn.classList.remove("hide");
-                        backFisrtAnswerBtn.classList.add("hide");
-                        backResultPage.classList.remove("hide")
-                        backTestListPage.classList.add("hide")
-                        document.querySelector(".group-btn").classList.remove("reverse");
-                    }
-                })
-
-            }
-
-            backFisrtAnswerBtn.addEventListener("click", function() {
-                window.scroll({
-                    top: 0, 
-                    left: 0, 
-                    behavior: 'smooth' 
-                });
-            });
-
-            nextAnswerBtn.addEventListener("click", function() {
-                item[5].scrollIntoView({behavior: "smooth"});
-            })
-
-           // limit character
-           for (var i = 0; i < itemContentText.length; i++) {
-               var content = itemContentText[i].innerText;
-               if (content.length > maxLength) { 
-                   var shortText = content.substring(0, maxLength);
-                   var truncateText = content.substring(maxLength, content.length - maxLength);
-                   var html = shortText + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>' +
-                       '<span class="morecontent">' +  truncateText +'<span>';
-                   itemContentText[i].innerHTML = html
-               }
-               
-           }
-           
-           // show more full answer
-           for (var j = 0; j < item.length; j++) {
-                btnCollapse = item[j].querySelector(".btn-collapse");
-                btnCollapse.addEventListener("click", function() {
-                    if ( this.closest('.answer-item').classList.contains('expand')) {
-                        this.closest('.answer-item').classList.remove("expand")
-                    } else {
-                        this.closest('.answer-item').classList.add("expand")
-                    }
-                 
-                })
-           } 
-        </script> -->
     </body>
 </html>

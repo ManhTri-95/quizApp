@@ -27,19 +27,36 @@
 			modalTimer: document.getElementById("modal-pause-timer"),
 			btnResume: document.getElementById("js-btn-continue"),
 			tooltips: document.getElementById("js-bubble"),
-			btnCloseTooltips: document.getElementById("js-bubble__close")
+			btnCloseTooltips: document.getElementById("js-bubble__close"),
+			btnClose: document.getElementById("js-btn-close"),
+			btnBackTestListsPage:  document.getElementById("js-btn-back-list-page"),
 		}
 		
 		this.data.totalQuestion = this.elements.questions.length;
 	   
-		this.opts = Object.assign(this.opts,opts);
-		// Check data
+		//this.opts = Object.assign(this.opts,opts);
+
+		this.opts = this.mergeObj(this.opts, opts)
 		
+
+		this.schema = {
+			timer: function(value) {
+				return !isNaN(value) && parseInt(value) == value && value >= 5;
+			}
+		}
+
+		this.validateOpts(this.opts, this.schema);
+
 		this.displayQuestion();
 		
 		this.initEventDOM();
 	}
-
+	Quiz.prototype.mergeObj = function(defaults, options) {
+		var opts = {};
+		for (var attrname in defaults) { opts[attrname] = defaults[attrname]; }
+		for (var attrname in options) { opts[attrname] = options[attrname]; }
+		return opts;
+	} 
 	Quiz.prototype.initEventDOM = function(){
 		
 		this.elements.btnNext.addEventListener('click', this.nextQuestion.bind(this));
@@ -49,17 +66,23 @@
 		this.elements.btnResume.addEventListener("click", this.evtClickResume.bind(this));
 
 		this.elements.btnCloseTooltips.addEventListener("click", this.evtClickCloseTooltips.bind(this));
+
+		this.elements.btnClose.addEventListener("click", this.evtClickPause.bind(this));
+
+		this.elements.btnBackTestListsPage.addEventListener("click", this.evtClickBackTestListsPage.bind(this))
 		
 		this.choicesAnswerEvt();
 	}
 
 	Quiz.prototype.evtClickPause = function(){
-		this.elements.modalTimer.style.display = "block";
+		this.elements.modalTimer.classList.remove('hide');
+		this.elements.modalTimer.classList.add("fadeinBottom");
 		this.pauseTimer();
 	}
 	Quiz.prototype.evtClickResume = function(){
-		this.elements.modalTimer.style.display = "none";
-			this.resumeTimer();
+		this.elements.modalTimer.classList.add('hide');
+		this.elements.modalTimer.classList.remove("fadeinBottom");
+		this.resumeTimer();
 	}
 
 	Quiz.prototype.evtClickCloseTooltips = function() {
@@ -67,8 +90,29 @@
 		this.opts.is_first = false;
 	}
 
+	Quiz.prototype.evtClickBackTestListsPage = function() {
+		this.postMessage('backPage', { "value": "test_lists" });
+	}
+
 	Quiz.prototype.getQuestion = function(index){
 		return this.elements.questions[index] || null;
+	}
+
+	Quiz.prototype.validateOpts = function(objects, schema) {
+		var errors = Object.keys(schema).filter(function(key) {
+			return !schema[key](objects[key]);
+		}).map(function (key) {
+			return new Error(key + " is invalid.");
+		})
+	
+		if (errors.length > 0) {
+			for(var i = 0; i < errors.length; i++) {
+				console.log(errors[i].message);
+				this.postMessage('loadFinished', {error: errors[i].message, "success": false});
+			}
+		} else {
+			console.log("Objects is valid");
+		}
 	}
 
 	Quiz.prototype.activeQuestionByIndex = function(index){
@@ -278,5 +322,5 @@
 	}
 
 	quiz.postMessage('javascriptLoaded', {"success": true});
-	startQuiz({"timer": 15, "is_first": true});
+	//startQuiz({"timer": 15, "is_first": true});
 })()

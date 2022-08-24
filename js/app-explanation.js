@@ -7,12 +7,12 @@ quizExplanation.prototype.data = {
 
 quizExplanation.prototype.init = function(){ 
     this.elements = {
+        el: document.querySelector(".answer"),
         items: document.querySelectorAll('.answer-item'),
-        contents: document.querySelectorAll('.answer-content'),
         btnBackToTop: document.getElementById("js-btn-back-answer"),
         btnScrollToEx: document.getElementById("js-btn-next-answer"),
-        backResultPage: document.getElementById("js-back-result-page"),
-        backTestListPage: document.getElementById("js-back-test-page")
+        btnBackResultPage: document.getElementById("js-btn-back-result-page"),
+        btnBackTestListsPage:  document.getElementById("js-btn-back-list-page"),
     }
 
     this.data.totalExplanation = this.elements.items.length;
@@ -26,18 +26,32 @@ quizExplanation.prototype.initEventDOM = function(){
     this.elements.btnBackToTop.addEventListener("click", this.evtClickBackToTop.bind(this));
 
     this.elements.btnScrollToEx.addEventListener("click", this.evtClickScrollToEx.bind(this));
+
+    this.elements.btnBackTestListsPage.addEventListener("click", this.evtClickBackTestListsPage.bind(this));
+
+    this.elements.btnBackResultPage.addEventListener("click", this.evtClickBackResultPage.bind(this));
+
 }
 
 quizExplanation.prototype.evtClickBackToTop = function(){
-    window.scroll({
+    this.elements.el.scroll({
         top: 0, 
         left: 0, 
         behavior: 'smooth'
     })
+   
+}
+
+quizExplanation.prototype.evtClickBackTestListsPage = function() {
+    this.postMessage('backPage', { "value": "test_lists" });
+}
+
+quizExplanation.prototype.evtClickBackResultPage = function() {
+    this.postMessage('backPage', { "value": "result_rate" });
 }
 
 quizExplanation.prototype.evtClickScrollToEx = function () {
-    this.elements.items[5].scrollIntoView({ behavior: "smooth"});
+    this.elements.items[5].scrollIntoView({ behavior: "smooth", block: "start"});
 }
 
 quizExplanation.prototype.displayExplanation = function () { 
@@ -49,19 +63,22 @@ quizExplanation.prototype.displayExplanation = function () {
     if (this.data.totalExplanation > 5) {
         this.maxLengthText();
 
-        window.addEventListener("scroll", () => {  
+        this.elements.btnBackToTop.classList.add("hide");
+        this.elements.btnBackTestListsPage.classList.add("hide");
+
+        this.elements.el.addEventListener("scroll", () => {    
             var elementTop = this.elements.items[5].getBoundingClientRect().top;
-            if (elementTop <= (window.innerHeight || document.documentElement.clientHeight)) { 
+            if (elementTop <= this.elements.el.clientHeight) { 
                 this.elements.btnScrollToEx.classList.add("hide");
                 this.elements.btnBackToTop.classList.remove("hide");
-                this.elements.backResultPage.classList.add("hide");
-                this.elements.backTestListPage.classList.remove("hide");
+                this.elements.btnBackResultPage.classList.add("hide");
+                this.elements.btnBackTestListsPage.classList.remove("hide");
                 document.querySelector(".group-btn").classList.add("reverse");
             } else {
                 this.elements.btnScrollToEx.classList.remove("hide");
                 this.elements.btnBackToTop.classList.add("hide");
-                this.elements.backResultPage.classList.remove("hide")
-                this.elements.backTestListPage.classList.add("hide")
+                this.elements.btnBackResultPage.classList.remove("hide")
+                this.elements.btnBackTestListsPage.classList.add("hide")
                 document.querySelector(".group-btn").classList.remove("reverse");
             }
         })
@@ -78,32 +95,50 @@ quizExplanation.prototype.showFullExplanation = function () {
 }
 
 quizExplanation.prototype.evtCollapseItems = function(e) {
-    var elements = e.target;
-    if((elements.parentElement.parentElement).classList.contains('expand')) {
-        elements.parentElement.parentElement.classList.remove("expand");
+    if((e.target.parentElement.parentElement).classList.contains('expand')) {
+        e.target.parentElement.parentElement.classList.remove("expand");
     } else {
-        elements.parentElement.parentElement.classList.add("expand");
+        e.target.parentElement.parentElement.classList.add("expand");
     }
 }
 
 quizExplanation.prototype.maxLengthText = function () { 
+    var contents = this.elements.el.querySelectorAll(".answer-content");
     var ellipsestext = "...";
-    for (var i = 0; i < this.elements.contents.length; i++) { 
-        var content = this.elements.contents[i].innerText;
+    for (var i = 0; i < contents.length; i++) { 
+        var content = contents[i].innerText;
         if (content.length >  this.data.maxLengthText) {
             var shortText = content.substring(0,  this.data.maxLengthText);
             var truncateText = content.substring(this.data.maxLengthText, content.length -this.data.maxLengthText);
             var html = shortText + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>' +
             '<span class="morecontent">' +  truncateText +'<span>';
-            this.elements.contents[i].innerHTML = html
+            contents[i].innerHTML = html
         }
     }
 }
 
+quizExplanation.prototype.postMessage = function(fncName, msg){
+    msg = JSON.stringify(msg);
+    
+    if( 'webkit' in window ){
+        window.webkit.messageHandlers[fncName].postMessage(msg);
+    }else if( 'Android' in window || 'android' in window ) {
+        (window.android || window.Android)[fncName](msg);
+    }
+}
+
+
 var quizExplanation = new quizExplanation();
 
 window.startQuizExplanation = function () {
-    quizExplanation.init();
+    var e = null, isSuccess = false;
+    try {
+        quizExplanation.init();
+        isSuccess = true;
+    } catch (error) {
+        e = error.message;
+    }
+    quizExplanation.postMessage('loadFinished', {error: e, "success": isSuccess});
 }
 
 startQuizExplanation();

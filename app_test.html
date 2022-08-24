@@ -5,14 +5,13 @@
         <meta http-equiv="encoding" content="utf-8">
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <meta name="viewport" content="height=device-height,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="styles/index.css">
-        <link rel="stylesheet" href="styles/app-test.css">
+        <link rel="stylesheet" href="styles/index.css?v=2">
+        <link rel="stylesheet" href="styles/app-test.css?v=3">
         <title>Title of the document</title>
       
     </head>
     <body>
-        <div class="container">
+        <div class="container hide">
             <header class="header-container">
                 <div class="header-top">
                     <span class="btn-open" id="js-btn-pause-timer">
@@ -166,20 +165,20 @@
                 </div>
                 <div class="fixed-footer">
                     <div class="group-btn">
-                        <button class="btn btn--white">閉じる</button>
+                        <button class="btn btn--white" id="js-btn-close">閉じる</button>
                         <button class="btn btn--primary" id="js-btn-next-qs" disabled>次の問題へ</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal" id="modal-pause-timer">
+        <div class="modal hide" id="modal-pause-timer">
             <div class="modal-dialog">
                 <div class="modal-body">
                     <p class="text-center">チェックテストを続けますか？</p>
                 </div>
                 <div class="modal-footer text-center">
                     <div class="group-btn">
-                        <button class="btn btn--white" id="js-btn-stop">やめる</button>
+                        <button class="btn btn--white" id="js-btn-back-list-page">やめる</button>
                         <button class="btn btn--primary" id="js-btn-continue">続ける</button>
                     </div>
                 </div>
@@ -188,12 +187,12 @@
         <div class="bubble" id="js-bubble">
             <div class="bubble__inner">
                 <div class="bubble__close" id="js-bubble__close">
-                    <i class="fa fa-times" aria-hidden="true"></i>
+                    <img width="21" src="./images/close-bubble.png" />
                 </div>
                 正解の選択肢をタップし、<br>
                 次の問題に進みましょう！
             </div>
         </div>
-        <script type = "text/javascript" src="js/app-test.js"></script>
+        <script type = "text/javascript" src="js/app-test.js?v=7"></script>
     </body>
 </html>

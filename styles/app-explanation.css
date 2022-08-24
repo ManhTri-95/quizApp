@@ -1,8 +1,9 @@
 
 .answer {
     padding: 10px;
-    padding-top: 87px;
-    padding-bottom: 72px;
+    overflow-y: auto;
+    max-height: calc(100vh - 140px);
+    overscroll-behavior: contain;
 }
 .answer-item {
     border: 1px solid #49A3E5;
