@@ -11,7 +11,7 @@
 		totalQuestion: 0,
 		storedAnswers: {
 			is_finished: false,
-			answer: null,
+			answer: "-1",
 			duration: 0
 		},
 	}
@@ -75,18 +75,21 @@
 	}
 
 	Quiz.prototype.evtClickPause = function(){
-		this.elements.modalTimer.classList.remove('hide');
-		this.elements.modalTimer.classList.add("fadeinBottom");
-		this.pauseTimer();
+		this.displayModalPauseTimer();
 	}
+
 	Quiz.prototype.evtClickResume = function(){
 		this.elements.modalTimer.classList.add('hide');
 		this.elements.modalTimer.classList.remove("fadeinBottom");
-		this.resumeTimer();
+		if (this.data.timeLeft > 0) {
+			this.resumeTimer();
+		}
 	}
 
 	Quiz.prototype.evtClickCloseTooltips = function() {
-		this.elements.tooltips.style.display = "none";
+		this.elements.tooltips.classList.remove("fadeIn");
+		this.elements.tooltips.classList.add("fadeout");
+		//this.elements.tooltips.style.display = "none";
 		this.opts.is_first = false;
 	}
 
@@ -112,6 +115,14 @@
 			}
 		} else {
 			console.log("Objects is valid");
+		}
+	}
+
+	Quiz.prototype.displayModalPauseTimer = function () {
+		this.elements.modalTimer.classList.remove('hide');
+		this.elements.modalTimer.classList.add("fadeinBottom");
+		if (this.data.timeLeft > 0) {
+			this.pauseTimer();
 		}
 	}
 
@@ -157,14 +168,19 @@
 		this.getAnswer();
 		if(this.data.currentQuestion < this.data.totalQuestion - 1) { 
 			
-			this.data.currentQuestion++;
+				this.elements.tooltips.classList.add("hide");
 
-			this.resetTimer();
+				this.data.currentQuestion++;
 
-			this.displayQuestion();
+				this.resetTimer();
+			
+				this.displayQuestion();
 
+				if (this.data.currentQuestion == (this.data.totalQuestion - 1)) {
+					this.elements.btnNext.innerText = "解答を見る"
+				}
 		} else {
-			// console.log('submit')
+			// console.log('submit')	
 		}
 	}
 
@@ -201,7 +217,7 @@
 	}
 
 	Quiz.prototype.changeProgress = function(){
-		var progressBarWidth =  this.data.timeLeft * this.elements.progressBar.offsetWidth / this.opts.timer;
+		var progressBarWidth = this.data.timeLeft / this.opts.timer * this.elements.progressBar.offsetWidth ;
 		this.elements.progressBar.children[0].style.width = progressBarWidth + "px";
 		
 		this.setText("timer", "残り" +  this.data.timeLeft + "秒");
@@ -209,7 +225,7 @@
 		this.elements.progressBar.children[0].classList.remove("warning");
 		this.elements.progressBar.children[0].classList.add("info");
 
-		if (this.data.timeLeft < (this.opts.timer*20/100)) { 
+		if (this.data.timeLeft < (this.opts.timer*20/100) + 1) { 
 			this.elements.progressBar.children[0].classList.add("warning");
 			this.elements.progressBar.children[0].classList.remove("info");
 		}
@@ -218,10 +234,14 @@
 	}
 
 	Quiz.prototype.needShowTooltipSuggestion = function(){
-		if (this.opts.is_first && (this.data.timeLeft <= this.opts.timer*50/100)) {
-			this.elements.tooltips.style.display = "block";
-		} else {
-			this.elements.tooltips.style.display = "none";
+		if (this.opts.is_first && (this.data.timeLeft <= (this.opts.timer*50/100 + 1))) {
+			this.elements.tooltips.classList.remove("hide");
+			this.elements.tooltips.classList.remove("fadeout");
+			this.elements.tooltips.classList.add("fadeIn");
+		} else if (this.opts.is_first && (this.data.timeLeft > (this.opts.timer*50/100 + 1))) {
+			this.elements.tooltips.classList.add("hide");
+			this.elements.tooltips.classList.remove("fadeIn");
+			this.elements.tooltips.classList.add("fadeout");
 		}
 		
 		return this;
@@ -264,16 +284,17 @@
 		
 		this.data.storedAnswers = {
 			is_finished: false,
-			answer: e.target.value || null,
+			answer: e.target.value || "-1",
 			duration: this.opts.timer - this.data.timeLeft,
-			id: this.getQuestion(this.data.currentQuestion).getAttribute('data-id') || ''
+			//id: this.getQuestion(this.data.currentQuestion).getAttribute('data-id') || ''
 		}
 		
 		this.elements.btnNext.removeAttribute('disabled');
 	}
 
 	Quiz.prototype.getAnswer = function () {
-		
+		this.data.storedAnswers.id = this.getQuestion(this.data.currentQuestion).getAttribute('data-id') || '';
+
 		this.data.storedAnswers.is_finished = (
 			this.data.currentQuestion >= this.data.totalQuestion - 1
 		); 
@@ -290,7 +311,7 @@
 		
 		this.data.storedAnswers = {
 			is_finished: false,
-			answer: null,
+			answer: "-1",
 			duration: this.opts.timer
 		}
 	}
@@ -302,6 +323,12 @@
 			window.webkit.messageHandlers[fncName].postMessage(msg);
 		}else if( 'Android' in window || 'android' in window ) {
 			(window.android || window.Android)[fncName](msg);
+		}
+	}
+
+	Quiz.prototype.evtCloseAppBackground = function(params) {
+		if (params.is_pause) {
+			this.displayModalPauseTimer();
 		}
 	}
 
@@ -317,10 +344,13 @@
 		}
 		
 		quiz.postMessage('loadFinished', {error: e, "success": isSuccess});
-		
 		return isSuccess;
 	}
 
 	quiz.postMessage('javascriptLoaded', {"success": true});
 	//startQuiz({"timer": 15, "is_first": true});
+
+	window.closeAppBackground = function(params) { 
+		quiz.evtCloseAppBackground(params)
+	}
 })()

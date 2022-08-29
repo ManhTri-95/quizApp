@@ -39,7 +39,7 @@
     overflow: hidden;
 }
 
-.progress-bar-inner { height: 100%;}
+.progress-bar-inner { height: 100%; }
 .progress-bar-inner.info {
     background-color: #49A3E5;
 }
@@ -50,11 +50,15 @@
 .qs-question { padding: 15px; border-bottom: 1px solid  #49A3E5; border-top: 1px solid  #49A3E5;}
 
 .question-text { margin-top: 10px;}
-.qs-answer {padding: 15px; max-height: calc(100vh - 225px); overflow-y: auto;}
+.qs-answer {padding: 15px; max-height: calc(100vh - 225px); overflow: auto;}
 
 .qs-answer-item { position: relative; display: flex; padding: 10px 20px; border: 1px solid #49A3E5; background-color: #FAFAFA; margin-bottom: 5px; border-radius: 15px; }
 .qs-answer__option { position: relative;}
 .qs-answer__option.disabled::after { content: "";position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; background-color: transparent;}
+.qs-answer__option.disabled.not-allow > label:not([type="radio"]:checked + label) {
+    background-color: #e9ecef;
+}
+.qs-answer__option.disabled.not-allow > label { opacity: .7;}
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
     position: absolute;
@@ -80,6 +84,7 @@
     left: 0;
 	right: 0;
 	bottom: 0;
+    padding: 0 15px;
     z-index: 1060;
     width: 100%;
     height: 100%;
@@ -109,7 +114,6 @@
     background-color: #69D099; 
     color: #FFFFFF;
     border-radius: 5px;
-    display: none;
     z-index: 11;
 }
 .bubble__inner {
@@ -144,6 +148,14 @@
     animation: fadeinBottom 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
 
+.fadeIn {
+    animation: fadeIn 1s forwards;
+}
+
+.fadeout {
+    animation: fadeOut 1s forwards;
+}
+
 @keyframes fadeInRight {
     from {
         opacity: 0;
@@ -170,4 +182,26 @@
     }
 }
 
-.qs__body { max-height: calc(100vh - 225px);overflow-y: auto; }
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateX(1.5rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+@keyframes fadeOut {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(1.5rem);
+    }
+}
+
+.qs__body { max-height: calc(100vh - 225px);overflow: auto; }

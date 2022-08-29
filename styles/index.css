@@ -40,13 +40,11 @@ img {
 .text-white { 
     color: #fff; 
 }
-.header-container.fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    background-color: #fff;
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .header-label { 
     padding: 7px 15px; 

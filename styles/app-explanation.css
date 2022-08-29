@@ -1,8 +1,7 @@
 
 .answer {
     padding: 10px;
-    overflow-y: auto;
-    max-height: calc(100vh - 140px);
+    overflow: auto;
     overscroll-behavior: contain;
 }
 .answer-item {
@@ -17,15 +16,21 @@
     margin-top: 0px;
 }
 
-.answer-item.expand  .answer-content  .morecontent{
+.answer-item.expand .answer-content .morecontent{
     display: none;
     max-height: 0;
 }
 .answer-item .answer-content .morecontent{ 
     height: auto;
-    max-height: 6000px;
-    overflow: hidden;
-    transition: max-height 3s ease-out;
+    max-height: auto;
+}
+.answer-item.expand .answer-content .moreellipses {
+    max-height: auto;
+    display: inline;
+}
+.answer-item .answer-content .moreellipses {
+    max-height: 0;
+    display: none;
 }
 .answer-item.expand .slider-block:nth-child(2n + 1) {
     display: none;
