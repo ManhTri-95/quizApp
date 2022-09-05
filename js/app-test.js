@@ -79,7 +79,7 @@
 	}
 
 	Quiz.prototype.evtClickResume = function(){
-		this.elements.modalTimer.classList.add('hide');
+		//this.elements.modalTimer.classList.add('hide');
 		this.elements.modalTimer.classList.remove("fadeinBottom");
 		if (this.data.timeLeft > 0) {
 			this.resumeTimer();
@@ -87,8 +87,8 @@
 	}
 
 	Quiz.prototype.evtClickCloseTooltips = function() {
-		this.elements.tooltips.classList.remove("fadeIn");
-		this.elements.tooltips.classList.add("fadeout");
+		this.elements.tooltips.classList.remove("fadeInBubble");
+		//this.elements.tooltips.classList.add("fadeout");
 		//this.elements.tooltips.style.display = "none";
 		this.opts.is_first = false;
 	}
@@ -119,7 +119,7 @@
 	}
 
 	Quiz.prototype.displayModalPauseTimer = function () {
-		this.elements.modalTimer.classList.remove('hide');
+		// this.elements.modalTimer.classList.remove('hide');
 		this.elements.modalTimer.classList.add("fadeinBottom");
 		if (this.data.timeLeft > 0) {
 			this.pauseTimer();
@@ -235,13 +235,14 @@
 
 	Quiz.prototype.needShowTooltipSuggestion = function(){
 		if (this.opts.is_first && (this.data.timeLeft <= (this.opts.timer*50/100 + 1))) {
-			this.elements.tooltips.classList.remove("hide");
-			this.elements.tooltips.classList.remove("fadeout");
-			this.elements.tooltips.classList.add("fadeIn");
+			//this.elements.tooltips.classList.remove("hide");
+			//this.elements.tooltips.classList.remove("fadeout");
+			this.elements.tooltips.classList.add("fadeInBubble");
 		} else if (this.opts.is_first && (this.data.timeLeft > (this.opts.timer*50/100 + 1))) {
-			this.elements.tooltips.classList.add("hide");
-			this.elements.tooltips.classList.remove("fadeIn");
-			this.elements.tooltips.classList.add("fadeout");
+			
+			this.elements.tooltips.classList.remove("fadeInBubble");
+			//this.elements.tooltips.classList.add("hide");
+			//this.elements.tooltips.classList.add("fadeout");
 		}
 		
 		return this;
@@ -312,7 +313,7 @@
 		this.data.storedAnswers = {
 			is_finished: false,
 			answer: "-1",
-			duration: this.opts.timer
+			duration: 0
 		}
 	}
 

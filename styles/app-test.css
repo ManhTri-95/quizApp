@@ -42,6 +42,7 @@
 .progress-bar-inner { height: 100%; }
 .progress-bar-inner.info {
     background-color: #49A3E5;
+    animation: progress .5s ;
 }
 .progress-bar-inner.warning{
     background-color: #DC85FB;
@@ -91,6 +92,9 @@
     overflow-x: hidden;
     overflow-y: auto;
     outline: 0;
+    opacity: 0;
+    transform: translateY(100vh);
+    transition: all .5s;
 }
 .modal-dialog.hide{
 	opacity: 0;
@@ -115,6 +119,10 @@
     color: #FFFFFF;
     border-radius: 5px;
     z-index: 11;
+    width: 0;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 1s;
 }
 .bubble__inner {
     position: relative;
@@ -123,8 +131,6 @@
 .bubble__inner::after {
     content: '';
     position: absolute;
-    width: 0;
-    height: 0;
     top: -36px;
     right: 30%; 
     border-top: 20px solid transparent;
@@ -145,7 +151,18 @@
 }
 
 .fadeinBottom {
-    animation: fadeinBottom 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    /* animation: fadeinBottom 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; */
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+}
+
+.fadeInBubble {
+    width: auto;
+    /* height: auto; */
+    opacity: 1;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
 }
 
 .fadeIn {
@@ -168,7 +185,7 @@
         -webkit-transform: none;
         transform: none;
     }
-}
+} 
 
 /* Modal scale animation */
 @keyframes fadeinBottom {
@@ -203,5 +220,16 @@
       transform: translateX(1.5rem);
     }
 }
+
+@keyframes progress {
+    0% {
+        width: 0%;
+        background: #DC85FB;
+    }
+    100% {
+      width: 100%;
+      background: #49A3E5;
+    }
+  }
 
 .qs__body { max-height: calc(100vh - 225px);overflow: auto; }

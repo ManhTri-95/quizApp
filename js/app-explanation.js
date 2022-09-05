@@ -2,13 +2,18 @@
     var quizExplanation = function () {}
     
     quizExplanation.prototype.data = { 
-        maxLengthText: 42
+        //maxLengthText: 42,
+        toDetails: {
+            id: '',
+            type: ''
+        },
     }
     
     quizExplanation.prototype.init = function(){ 
         this.elements = {
             el: document.querySelector(".answer"),
             items: document.querySelectorAll('.answer-item'),
+            slideItem: document.querySelectorAll('.slider-item'),
             btnBackToTop: document.getElementById("js-btn-back-answer"),
             btnScrollToEx: document.getElementById("js-btn-next-answer"),
             btnBackResultPage: document.getElementById("js-btn-back-result-page"),
@@ -16,10 +21,29 @@
         }
     
         this.data.totalExplanation = this.elements.items.length;
-    
+
+        /**
+        * Defaults
+        */
+        this.defaultOptions = {
+            moreText: 'もっと見る',
+            lessText: '小さくする',
+            wordsCount: 100,
+        }
+
+         // Internal Settings
+        this.settings = {
+            originalContentArr: [],
+            truncatedContentArr: [],
+        }
+
         this.displayExplanation();
     
         this.initEventDOM();
+
+        // document.querySelector('.container')
+		// .classList.remove('hide');
+
     }
     
     quizExplanation.prototype.initEventDOM = function(){ 
@@ -31,6 +55,7 @@
     
         this.elements.btnBackResultPage.addEventListener("click", this.evtClickBackResultPage.bind(this));
     
+        this.toDetailsEvt();
     }
     
     quizExplanation.prototype.evtClickBackToTop = function(){
@@ -41,10 +66,12 @@
         })
     }
     
+    // Back native page test list
     quizExplanation.prototype.evtClickBackTestListsPage = function() {
         this.postMessage('backPage', { "value": "test_lists" });
     }
     
+    // Back native page result rate
     quizExplanation.prototype.evtClickBackResultPage = function() {
         this.postMessage('backPage', { "value": "result_rate" });
     }
@@ -56,6 +83,7 @@
     quizExplanation.prototype.displayExplanation = function () {
 
         this.calculatorDom(this.elements.el); 
+        this.maxLengthText();
 
         if (this.data.totalExplanation <= 5) {
             this.elements.btnBackToTop.classList.add("hide");
@@ -63,7 +91,6 @@
         } 
     
         if (this.data.totalExplanation > 5) {
-            this.maxLengthText();
     
             this.elements.btnBackToTop.classList.add("hide");
             this.elements.btnBackTestListsPage.classList.add("hide");
@@ -103,28 +130,100 @@
             btnCollapse.addEventListener("click", this.evtCollapseItems.bind(this))
        } 
     }
-    
+ 
     quizExplanation.prototype.evtCollapseItems = function(e) {
         if((e.target.parentElement.parentElement).classList.contains('expand')) {
             e.target.parentElement.parentElement.classList.remove("expand");
+            e.target.innerText = "小さくする"
         } else {
             e.target.parentElement.parentElement.classList.add("expand");
+            e.target.innerText = "もっと見る"
         }
     }
     
-    quizExplanation.prototype.maxLengthText = function () { 
-        var contents = this.elements.el.querySelectorAll(".answer-content");
-        var ellipsestext = "...";
-        for (var i = 0; i < contents.length; i++) { 
-            var content = contents[i].innerText;
-            if (content.length >  this.data.maxLengthText) {
-                var shortText = content.substring(0,  this.data.maxLengthText);
-                var truncateText = content.substring(this.data.maxLengthText, content.length -this.data.maxLengthText);
-                var html = shortText + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>' +
-                '<span class="morecontent">' +  truncateText +'<span>';
-                contents[i].innerHTML = html
-            }
+    quizExplanation.prototype.toDetailsEvt = function () {
+        for (var i = 0; i < this.elements.slideItem.length; i++) {
+            this.elements.slideItem[i].addEventListener("click", this.toDetails.bind(this));
+        }    
+    } 
+
+    quizExplanation.prototype.toDetails = function(e) {
+        this.data.toDetails = {
+            id: e.target.getAttribute("data-id"),
+            type: e.target.getAttribute("data-type").toUpperCase(),
         }
+        this.postMessage('toDetails', this.data.toDetails);
+        console.log(this.data.toDetails)
+    }
+
+    quizExplanation.prototype.maxLengthText = function () { 
+        var contents = document.querySelectorAll(".js-read-smore");
+        // var ellipsestext = "...";
+        // for (var i = 0; i < contents.length; i++) { 
+        //     var content = contents[i].innerHTML;
+        //     if (content.length >  this.data.maxLengthText) {
+        //         var shortText = content.substring(0,  this.data.maxLengthText);
+        //         var truncateText = content.substring(this.data.maxLengthText, content.length -this.data.maxLengthText);
+        //         var html = shortText + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>' +
+        //         '<span class="morecontent">' +  truncateText +'<span>';
+        //         contents[i].innerHTML = html
+        //     }
+        // }
+        for (let i = 0, n = contents.length; i < n; ++i) {
+            this.truncate(contents[i], i);
+        }
+       
+    }
+
+    quizExplanation.prototype.truncate = function(el, idx) { 
+        var originalContent = el.innerHTML,
+
+            numberWords = el.dataset.readSmoreWords || this.defaultOptions.wordsCount,
+
+            numberCount = el.dataset.readSmoreChars || numberWords,
+
+            truncateContent = this.ellipse(
+                originalContent,
+                numberCount,
+                el.dataset.readSmoreChars ? true : false
+            );
+
+        var originalContentCount = el.dataset.readSmoreWords
+        ? this.getWordCount(originalContent)
+        : this.getCharCount(originalContent);
+
+        this.settings.originalContentArr.push(originalContent);
+        this.settings.truncatedContentArr.push(truncateContent);
+        if (numberCount < originalContentCount) { 
+            el.innerHTML = this.settings.truncatedContentArr[idx];
+            console.log(el.innerHTML)
+        }
+        
+    }
+
+    quizExplanation.prototype.ellipse = function (str, max, isChars = false) {
+         // Trim starting/ending empty spaces
+        const trimedSpaces = this.trimSpaces(str);
+        if (isChars) { 
+            return trimedSpaces.split('').slice(0, max).join('') + '...';
+        }
+        return trimedSpaces.split(/\s+/).slice(0, max).join(' ') + '...';
+        console.log(trimedSpaces)
+    }
+
+
+
+    quizExplanation.prototype.getCharCount = function(str) {
+        return str.split(/\s+/).length;
+    }
+
+    quizExplanation.prototype.getCharCount = function(str) {
+        console.log(str.length)
+        return str.length;
+      }
+ 
+    quizExplanation.prototype.trimSpaces = function (str) {
+        return str.replace(/(^\s*)|(\s*$)/gi, '');
     }
     
     quizExplanation.prototype.postMessage = function(fncName, msg){
