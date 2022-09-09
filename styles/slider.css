@@ -6,24 +6,29 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.4;
     width: 100%;
 }
 
-.purejscarousel {
+.jscarousel {
     overflow: hidden;
 }
 
-.carousel-item {
-    background-color: #EFFAFF;
-    padding: 20px;
-    width: 250px;
-    box-shadow: 0 4px 6px rgb(0 0 0 / 35%);
-    border-radius: 15px;
+.slide {
+    width: 300px;
     float: left;
 }
+.carousel-item { 
+    padding: 20px;
+}
 
+.carousel__inner {
+    box-shadow: 0 4px 6px rgb(0 0 0 / 35%);
+    background-color: #EFFAFF;
+    border-radius: 15px;
+    padding: 20px;
+}
 .slide-top {
     display: flex;
 }

@@ -1,15 +1,17 @@
 (function (){
     var quizExplanation = function () {}
     
-    quizExplanation.prototype.data = { 
-        //maxLengthText: 42,
-        toDetails: {
-            id: '',
-            type: ''
-        },
+    quizExplanation.prototype.data = {}
+
+    quizExplanation.prototype.defaultOptions = {
+        voidTags: ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'wbr'],
+        wordsCount: 42,
+        blockClassName: 'read-smore',
+        moreText: 'もっと見る',
+        lessText: '小さくする',
     }
-    
-    quizExplanation.prototype.init = function(){ 
+
+    quizExplanation.prototype.init = function(options){ 
         this.elements = {
             el: document.querySelector(".answer"),
             items: document.querySelectorAll('.answer-item'),
@@ -20,30 +22,17 @@
             btnBackTestListsPage:  document.getElementById("js-btn-back-list-page"),
         }
     
+        this.options = Object.assign({}, this.defaultOptions, options);
+    
         this.data.totalExplanation = this.elements.items.length;
-
-        /**
-        * Defaults
-        */
-        this.defaultOptions = {
-            moreText: 'もっと見る',
-            lessText: '小さくする',
-            wordsCount: 100,
-        }
-
-         // Internal Settings
-        this.settings = {
-            originalContentArr: [],
-            truncatedContentArr: [],
-        }
-
+    
         this.displayExplanation();
     
         this.initEventDOM();
 
+        this.toDetailsEvt();
         // document.querySelector('.container')
 		// .classList.remove('hide');
-
     }
     
     quizExplanation.prototype.initEventDOM = function(){ 
@@ -55,7 +44,6 @@
     
         this.elements.btnBackResultPage.addEventListener("click", this.evtClickBackResultPage.bind(this));
     
-        this.toDetailsEvt();
     }
     
     quizExplanation.prototype.evtClickBackToTop = function(){
@@ -66,12 +54,10 @@
         })
     }
     
-    // Back native page test list
     quizExplanation.prototype.evtClickBackTestListsPage = function() {
         this.postMessage('backPage', { "value": "test_lists" });
     }
     
-    // Back native page result rate
     quizExplanation.prototype.evtClickBackResultPage = function() {
         this.postMessage('backPage', { "value": "result_rate" });
     }
@@ -82,8 +68,28 @@
      
     quizExplanation.prototype.displayExplanation = function () {
 
-        this.calculatorDom(this.elements.el); 
-        this.maxLengthText();
+        for (var i = 0; i < this.elements.items.length; i++) { 
+
+            this.createBtnReadMore(i);
+
+            var smoreContents = this.elements.items[i].querySelectorAll(".js-read-smore");
+               
+            for ( var j = 0; j < smoreContents.length; j++) {
+                var numberWords = smoreContents[j].dataset.readSmoreWords || this.options.wordsCount,
+                    originalContent = smoreContents[j].innerHTML,
+                    truncateContent = this.htmlEllipsis(originalContent, numberWords, true);
+                
+                var tranCateWrap = document.createElement('div');
+
+                    tranCateWrap.className = "answer-content truncate-text";
+
+                    tranCateWrap.innerHTML = truncateContent
+
+                    smoreContents[j].parentNode.insertBefore(tranCateWrap, smoreContents[j].nextSibling);
+            }
+        }
+       
+        //this.calculatorDom(this.elements.el); 
 
         if (this.data.totalExplanation <= 5) {
             this.elements.btnBackToTop.classList.add("hide");
@@ -91,7 +97,6 @@
         } 
     
         if (this.data.totalExplanation > 5) {
-    
             this.elements.btnBackToTop.classList.add("hide");
             this.elements.btnBackTestListsPage.classList.add("hide");
     
@@ -112,35 +117,136 @@
                 }
             })
         }
-    
-        this.showFullExplanation();
     }
 
-    quizExplanation.prototype.calculatorDom = function(el) {
-        var headers = document.querySelector('.header-container').clientHeight,
-            footers = document.querySelector('.fixed-footer').clientHeight,
-            elHeight = document.documentElement.clientHeight - (headers + footers);
-        
-        el.style.height = elHeight + 'px';
-    }
-
-    quizExplanation.prototype.showFullExplanation = function () { 
-        for (var i = 0; i < this.data.totalExplanation; i++) {
-            var btnCollapse = this.elements.items[i].querySelector(".btn-collapse");
-            btnCollapse.addEventListener("click", this.evtCollapseItems.bind(this))
-       } 
-    }
- 
-    quizExplanation.prototype.evtCollapseItems = function(e) {
-        if((e.target.parentElement.parentElement).classList.contains('expand')) {
-            e.target.parentElement.parentElement.classList.remove("expand");
-            e.target.innerText = "小さくする"
-        } else {
-            e.target.parentElement.parentElement.classList.add("expand");
-            e.target.innerText = "もっと見る"
+    quizExplanation.prototype.htmlEllipsis = function(html, maxLength, addEllipsis) {
+        var len = html.length;
+        if (len < maxLength) {
+            return html
         }
+
+        // leave room for ellipsis
+        if (addEllipsis) {
+            --maxLength
+        }
+        var i = 0,
+            charCount = 0,
+            tagStack = [];
+        while (i < len && charCount < maxLength) {
+            var char = html.charAt(i),
+                charCode = html.charCodeAt(i);
+            if (char === '<') { 
+                var tag = this.extractTag(html, i);
+                i += tag.length;
+                
+                if (this.isEndTag(tag)) {
+                    tagStack.pop();
+                } else {
+                    var tagName = this.extractTagName(tag);
+
+                    if (!this.isVoidTag(tagName)) {
+                        tagStack.push(tagName);
+                    }
+                }
+            } else {
+                if (charCode >= 0xD800 && charCode <= 0xDBFF && i + 1 < len) { 
+                    ++i;
+                }
+
+                ++charCount;
+                ++i;
+            }
+        }
+        
+        let result = html.slice(0, i);
+
+        for (let j = tagStack.length - 1; j >= 0; --j) {
+            result += '</' + tagStack[j] + '>';
+        }
+
+        if (addEllipsis && result.length < html.length) {
+            result += '&hellip;';
+        }
+        return result;
     }
-    
+
+    /**
+     * Extracts <tag id="foo"> from larger string. Assumes str[startIdx] === '<'
+     */
+    quizExplanation.prototype.extractTag = function(str, startIdx) {
+        const endIdx = str.indexOf('>', startIdx);
+        return str.slice(startIdx, endIdx + 1);
+    }
+
+    /** Checks that <tag> is and end tag */
+    quizExplanation.prototype.isEndTag = function(tag) {
+        return tag[1] === '/'
+    }
+
+    /** Extracts tag from <tag id="foo"> */
+    quizExplanation.prototype.extractTagName = function(tag) {
+        var tagNameEndIdx = tag.indexOf(' ');
+        if (tagNameEndIdx === -1) {
+            // check for <br/> style tags
+            tagNameEndIdx = tag.indexOf('/');
+
+            if (tagNameEndIdx === -1) {
+                tagNameEndIdx = tag.length - 1;
+            }
+        }
+        
+        return tag.slice(1, tagNameEndIdx);
+    }
+
+    /** Checks that tabName is a void tag (it doesn't have an end tag) */
+    quizExplanation.prototype.isVoidTag = function (tagName) {
+        for (var i = this.options.voidTags.length - 1; i >= 0; --i) {
+            if (tagName ===  this.options.voidTags[i]) {
+                return true
+            }
+        }
+        return false;
+    }
+
+    // quizExplanation.prototype.calculatorDom = function(el) {
+    //     var headers = document.querySelector('.header-container').clientHeight,
+    //         footers = document.querySelector('.fixed-footer').clientHeight,
+    //         elHeight = document.documentElement.clientHeight - (headers + footers);
+        
+    //     el.style.height = elHeight + 'px';
+    // }
+
+    quizExplanation.prototype.createBtnReadMore = function(idx) {
+        var btnReadMoreWrap = document.createElement('div');
+
+        btnReadMoreWrap.className = `text-center ${this.options.blockClassName}__wrap`;
+
+        btnReadMoreWrap.innerHTML = `<button id=${this.options.blockClassName}_${idx}
+                                            class="btn btn--info ${this.options.blockClassName}__link">
+                                            ${this.options.moreText}
+                                    </button>`
+
+        this.elements.items[idx].appendChild(btnReadMoreWrap);
+
+        // Call link click handler
+        this.handleClickReadMore(idx)
+    }
+
+    quizExplanation.prototype.handleClickReadMore = function (idx) { 
+        var btnReadMore = document.querySelector(`#${this.options.blockClassName}_${idx}`)
+        btnReadMore.addEventListener('click', (e) => {
+            this.elements.items[idx].classList.toggle('is-expanded');
+            var target = e.currentTarget;
+            if (target.dataset.clicked !== 'true') {
+                target.innerHTML = this.options.lessText;
+                target.dataset.clicked = true;
+            } else {
+                target.innerHTML = this.options.moreText;
+                target.dataset.clicked = false;
+            }
+        })
+    }
+
     quizExplanation.prototype.toDetailsEvt = function () {
         for (var i = 0; i < this.elements.slideItem.length; i++) {
             this.elements.slideItem[i].addEventListener("click", this.toDetails.bind(this));
@@ -153,77 +259,6 @@
             type: e.target.getAttribute("data-type").toUpperCase(),
         }
         this.postMessage('toDetails', this.data.toDetails);
-        console.log(this.data.toDetails)
-    }
-
-    quizExplanation.prototype.maxLengthText = function () { 
-        var contents = document.querySelectorAll(".js-read-smore");
-        // var ellipsestext = "...";
-        // for (var i = 0; i < contents.length; i++) { 
-        //     var content = contents[i].innerHTML;
-        //     if (content.length >  this.data.maxLengthText) {
-        //         var shortText = content.substring(0,  this.data.maxLengthText);
-        //         var truncateText = content.substring(this.data.maxLengthText, content.length -this.data.maxLengthText);
-        //         var html = shortText + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>' +
-        //         '<span class="morecontent">' +  truncateText +'<span>';
-        //         contents[i].innerHTML = html
-        //     }
-        // }
-        for (let i = 0, n = contents.length; i < n; ++i) {
-            this.truncate(contents[i], i);
-        }
-       
-    }
-
-    quizExplanation.prototype.truncate = function(el, idx) { 
-        var originalContent = el.innerHTML,
-
-            numberWords = el.dataset.readSmoreWords || this.defaultOptions.wordsCount,
-
-            numberCount = el.dataset.readSmoreChars || numberWords,
-
-            truncateContent = this.ellipse(
-                originalContent,
-                numberCount,
-                el.dataset.readSmoreChars ? true : false
-            );
-
-        var originalContentCount = el.dataset.readSmoreWords
-        ? this.getWordCount(originalContent)
-        : this.getCharCount(originalContent);
-
-        this.settings.originalContentArr.push(originalContent);
-        this.settings.truncatedContentArr.push(truncateContent);
-        if (numberCount < originalContentCount) { 
-            el.innerHTML = this.settings.truncatedContentArr[idx];
-            console.log(el.innerHTML)
-        }
-        
-    }
-
-    quizExplanation.prototype.ellipse = function (str, max, isChars = false) {
-         // Trim starting/ending empty spaces
-        const trimedSpaces = this.trimSpaces(str);
-        if (isChars) { 
-            return trimedSpaces.split('').slice(0, max).join('') + '...';
-        }
-        return trimedSpaces.split(/\s+/).slice(0, max).join(' ') + '...';
-        console.log(trimedSpaces)
-    }
-
-
-
-    quizExplanation.prototype.getCharCount = function(str) {
-        return str.split(/\s+/).length;
-    }
-
-    quizExplanation.prototype.getCharCount = function(str) {
-        console.log(str.length)
-        return str.length;
-      }
- 
-    quizExplanation.prototype.trimSpaces = function (str) {
-        return str.replace(/(^\s*)|(\s*$)/gi, '');
     }
     
     quizExplanation.prototype.postMessage = function(fncName, msg){
@@ -235,7 +270,6 @@
             (window.android || window.Android)[fncName](msg);
         }
     }
-    
     
     var quizExplanation = new quizExplanation();
     

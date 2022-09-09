@@ -1,6 +1,6 @@
-
 .answer {
     padding: 10px;
+    height: calc(100vh - 145px);
     overflow: auto;
     overscroll-behavior: contain;
 }
@@ -16,33 +16,23 @@
     margin-top: 0px;
 }
 
-.answer-item.expand .answer-content .morecontent{
-    display: none;
-    max-height: 0;
-}
-.answer-item .answer-content .morecontent{ 
-    height: auto;
-    max-height: auto;
-}
-.answer-item.expand .answer-content .moreellipses {
-    max-height: auto;
-    display: inline;
-}
-.answer-item .answer-content .moreellipses {
-    max-height: 0;
-    display: none;
-}
-/* .answer-item.expand .slider-block:nth-child(2n + 1) {
-    display: none;
-} */
-
-.answer-item.expand .slider-block .label-default {
-    display: none;
-}
-.answer-item.expand .slider-block .answer-slider {
+.answer-item div .slider-block:not(:first-child) {
     display: none;
 }
 
+.answer-item .js-read-smore,
+.answer-item .answer-content-description {
+    display: none;
+}
+
+.answer-item.is-expanded .answer-content-description,
+.answer-item.is-expanded .js-read-smore {
+    display: block;
+}
+
+.answer-item.is-expanded .truncate-text {
+    display: none;
+}
 .answer-inner {
     padding: 0 18px;
  
@@ -138,7 +128,9 @@
     height: 55%;
 }
 .slider-img img {
-    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    object-fit: contain;
 }
 
 .slide-title {
@@ -185,7 +177,7 @@
 }
 
 .answer-item .btn {
-    font-size: 12px;
+    font-size: 14px;
     width: 124px;
 }
 
