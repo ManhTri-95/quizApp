@@ -1,0 +1,19 @@
+/*
+  This is the entry point for all styles.
+  Include here all the files that
+  should be on the page.
+*/
+
+@import "font-face";
+@import "variables";
+@import "global";
+
+@import "layout/_header";
+@import "layout/_footer";
+
+@import "components/_button";
+@import "components/_progress";
+@import "components/_modal";
+@import "components/_animation";
+
+@import "pages/_app-test";

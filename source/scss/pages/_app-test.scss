@@ -1,0 +1,171 @@
+.qs__top { 
+    display: flex; 
+    margin-bottom: 15px; 
+    padding: 0 15px;
+}
+
+.qs-total {
+    margin-right: 12px;
+}
+
+.qs-timetext { 
+    margin-left: 12px;
+}
+
+.qs-total, .qs-timetext { 
+    color: $blue-3; 
+    white-space: nowrap; 
+}
+
+.qs-question { 
+    padding: 15px; 
+    border-bottom: 1px solid $main-color; 
+    border-top: 1px solid $main-color;
+}
+
+
+.qs-question { 
+    padding: 15px; 
+    border-bottom: 1px solid $main-color; 
+    border-top: 1px solid $main-color;
+}
+
+.question-text { 
+    margin-top: 10px;
+}
+
+.qs-answer {
+    padding: 15px; 
+    max-height: calc(100vh - 225px); 
+    overflow: auto; 
+    -webkit-overflow-scrolling: touch;
+    -moz-overflow-scrolling: touch;
+    -o-overflow-scrolling: touch;
+    -ms-overflow-scrolling: touch;
+}
+
+.qs-answer-item { 
+    position: relative; 
+    display: flex; 
+    padding: 10px 20px; 
+    border: 1px solid $main-color; 
+    background-color: $light-3; 
+    margin-bottom: 5px; 
+    border-radius: 15px; 
+}
+
+.qs-answer__option { 
+    position: relative;
+
+    &.disabled {
+        &::after {
+            content: "";
+            position: absolute; 
+            top: 0; 
+            right: 0; 
+            bottom: 0; 
+            left: 0; 
+            z-index: 1; 
+            background-color: transparent;
+        }
+
+        &.not-allow > label:not([type="radio"]:checked + label) {
+            background-color: $light-4;
+        }
+    }
+}
+
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+[type="radio"]:checked + label {
+    background-color: $blue-2;
+}
+
+.answer-case { margin-right: 24px;}
+
+.btn-stop, .btn-continue { 
+    width: 112px; 
+}
+
+.fadeInRight:not(:first-child) {
+    -webkit-animation: fadeInRight .5s ease-in-out;
+    -moz-animation:  fadeInRight .5s ease-in-out;
+    -o-animation:  fadeInRight .5s ease-in-out;
+    animation: fadeInRight .5s ease-in-out;
+}
+
+
+.bubble { 
+    position: fixed;
+    right: 5px;
+    bottom: 55px;
+    background-color: $green; 
+    color: #FFFFFF;
+    border-radius: 5px;
+    z-index: 11;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 1s;
+
+    &__inner {
+        position: relative;
+        padding: 10px 20px;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: -36px;
+            right: 30%; 
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid $green;
+            border-right: 30px solid transparent;
+        }
+    }
+
+    &__close {
+        position: absolute; 
+        right: 5px; 
+        top: -8px; 
+        width: 20px; 
+        height: 20px; 
+        border-radius: 100%;
+        background-color:$green-1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+
+.fadeinBottom {
+    /* animation: fadeinBottom 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; */
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -o-transform: translateY(0);
+    -moz-transform: translateY(0);
+}
+
+.fadeInBubble {
+    width: auto;
+    height: auto;
+    opacity: 1;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -o-transform:  translateX(0);
+}
+
+.qs__body { 
+    max-height: calc(100vh - 225px);
+    overflow: auto; 
+    -webkit-overflow-scrolling: touch;
+    -moz-overflow-scrolling: touch;
+    -o-overflow-scrolling: touch;
+    -ms-overflow-scrolling: touch;
+}

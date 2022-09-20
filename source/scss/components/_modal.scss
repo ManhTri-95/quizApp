@@ -1,0 +1,39 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+	right: 0;
+	bottom: 0;
+    padding: 0 15px;
+    z-index: 1060;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+    opacity: 0;
+    transform: translateY(100vh);
+    transition: all .5s;
+}
+.modal-dialog.hide{
+	opacity: 0;
+}
+
+.modal-dialog {
+    max-width: 350px;
+    margin: 165px auto auto;
+    position: relative;
+    width: auto;
+    background-color:  $light-3;
+    box-shadow: $box-shadow;
+    border-radius: 15px;
+}
+
+.modal-body, 
+.modal-footer { 
+    padding: 20px 15px;
+}
+
+.modal-footer {
+    .btn { width: 112px;}
+}

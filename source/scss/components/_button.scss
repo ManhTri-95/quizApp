@@ -1,0 +1,38 @@
+/* css button  */
+.btn { 
+    display: inline-block;
+    width: 116px; 
+    height: 32px; 
+    border-radius: 5px;
+    text-align: center;
+    line-height: 32px; 
+    font-size: 16px; 
+    border: none;
+    box-shadow: $box-shadow;
+    padding: 0;
+}
+
+.btn--primary { 
+    background-color: $main-color; 
+    color: $light; 
+}
+
+.btn--white { 
+    background-color: $light-2;
+    color: $blue-1; 
+}
+
+.btn--info {
+    background-color: $main-color;
+    color: $light-1; 
+}
+
+.btn-outline-warning {
+    background-color: $light-1;
+    color: $orange;
+}
+
+.btn-warning {
+    background-color: $orange;
+    color: $light;
+}

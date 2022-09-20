@@ -168,7 +168,8 @@
 		this.getAnswer();
 		if(this.data.currentQuestion < this.data.totalQuestion - 1) { 
 			
-				this.elements.tooltips.classList.add("hide");
+				//this.elements.tooltips.classList.add("hide");
+				this.elements.tooltips.classList.remove("fadeInBubble");
 
 				this.data.currentQuestion++;
 
@@ -235,14 +236,10 @@
 
 	Quiz.prototype.needShowTooltipSuggestion = function(){
 		if (this.opts.is_first && (this.data.timeLeft <= (this.opts.timer*50/100 + 1))) {
-			//this.elements.tooltips.classList.remove("hide");
-			//this.elements.tooltips.classList.remove("fadeout");
 			this.elements.tooltips.classList.add("fadeInBubble");
 		} else if (this.opts.is_first && (this.data.timeLeft > (this.opts.timer*50/100 + 1))) {
 			
 			this.elements.tooltips.classList.remove("fadeInBubble");
-			//this.elements.tooltips.classList.add("hide");
-			//this.elements.tooltips.classList.add("fadeout");
 		}
 		
 		return this;
@@ -349,7 +346,7 @@
 	}
 
 	quiz.postMessage('javascriptLoaded', {"success": true});
-	//startQuiz({"timer": 15, "is_first": true});
+	// /startQuiz({"timer": 15, "is_first": true});
 
 	window.closeAppBackground = function(params) { 
 		quiz.evtCloseAppBackground(params)

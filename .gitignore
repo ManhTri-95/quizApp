@@ -1,0 +1,14 @@
+# Files and folders of the operating system
+.DS_Store
+Thumbs.db
+
+# Editor files
+.idea
+*.sublime*
+.vscode
+.prettierignore
+
+# Helper files
+*.log*
+node_modules/
+build/

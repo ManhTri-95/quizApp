@@ -1,0 +1,22 @@
+.fixed-footer { 
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: #fff; 
+}
+
+.group-btn {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+
+    &.reverse {
+        flex-direction: row-reverse;
+    }
+
+    .btn{
+        margin: 0 18px;
+    }
+}

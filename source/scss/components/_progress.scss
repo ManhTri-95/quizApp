@@ -1,0 +1,29 @@
+/* css progress bar */
+
+.qs-progress {
+    width: calc(100% - 105px);
+    display: flex;
+    align-items: center;
+}
+
+.progress-bar {
+    flex-grow: 1;
+    width: 100%; 
+    border-radius: 7px;
+    height: 7px;
+    background-color: $light-5;
+    overflow: hidden;
+}
+
+.progress-bar-inner { 
+    height: 100%; 
+    &.info {
+        background-color: $main-color;
+        //animation: progress .5s ;
+    }
+
+    &.warning{
+        background-color: $violet;
+    }
+}
+

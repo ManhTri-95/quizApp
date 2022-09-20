@@ -1,0 +1,31 @@
+.header-top { 
+    position: relative; 
+    height: 45px;
+}
+
+.btn-open {
+    padding: 10px 12px;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    right: 0px;
+}
+
+.header-label { 
+    padding: 7px 15px; 
+}
+
+.header-title { 
+    font-size: 18px; 
+    padding: 12px 15px; 
+}
+
+.label-default { 
+    color: $light-3; 
+    background-color: $main-color; 
+    height : 22px; 
+    padding: 0 10px;
+    text-align: center; 
+    line-height: 22px; 
+    display: inline-block;
+}

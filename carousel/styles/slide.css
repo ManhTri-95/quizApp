@@ -13,13 +13,14 @@ body {
 
 .jscarousel {
     overflow: hidden;
+    position: relative;
 }
 
 .slide {
     width: 300px;
     float: left;
 }
-.carousel-item { 
+.jscarousel-item { 
     padding: 20px;
 }
 
@@ -54,3 +55,40 @@ body {
     margin-top: 15px;
     color: #071148;
 }
+
+.jscarousel-dots-container {
+   text-align: center;
+}
+
+.jscarousel-btn {
+    user-select: none;
+    outline: none;
+    position: absolute;
+    padding: 0;
+    z-index: 2;
+    top: 45%;
+    transform: translateY(-45%);
+    background: none;
+    border: 0;
+}
+
+.jscarousel-btn-next { right: 8%;}
+
+.jscarousel-btn-prev { left: 8%;}
+
+.jscarousel-dot {
+    outline: none;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 99px;
+    width: 14px;
+    height: 14px;
+    margin: 7px;
+    padding: 0;
+    background-color: #fff;
+    border: 1px solid gray;
+}
+
+.jscarousel-dot.active {
+    background-color: gray;
+} 

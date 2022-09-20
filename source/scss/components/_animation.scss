@@ -1,0 +1,71 @@
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        -webkit-transform: translate3d(100%, 0, 0);
+        -o-transform: translate3d(100%, 0, 0);
+        -moz-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: none;
+        -o-transform: none;
+        -moz-transform: none;
+        transform: none;
+    }
+} 
+
+
+/* Modal scale animation */
+@keyframes fadeinBottom {
+    0% {
+        transform:scale(.8) translateY(1000px);
+        opacity:0;
+    }
+    100% {
+        transform:scale(1) translateY(0px);
+        opacity:1;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateX(1.5rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+@keyframes fadeOut {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(1.5rem);
+    }
+}
+
+@keyframes progress {
+    0% {
+        width: 0%;
+        background: $violet;
+    }
+    100% {
+      width: 100%;
+      background: $main-color;
+    }
+}
+
+.fadeIn {
+    animation: fadeIn 1s forwards;
+}
+
+.fadeout {
+    animation: fadeOut 1s forwards;
+}
